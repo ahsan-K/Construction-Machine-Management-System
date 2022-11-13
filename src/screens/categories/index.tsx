@@ -18,6 +18,11 @@ const Category = ({ route }: any) => {
     const Machines = useSelector((state: RootState) => state.machineReducer.data)
     const dispatch = useDispatch()
 
+    useEffect(()=>{
+        if(Machines[route.params.index]?.fields.length !== Machines[route.params.index]?.machines.length){
+            dispatch(updateAttributes({categoryIndex:route.params.index}))
+        }
+    },[Machines[route.params.index]?.fields])
 
     const RenderAttributes = ({ item, index, key }: any) => {
         if (item?.type === "text" || item?.type === "number") {
@@ -45,11 +50,11 @@ const Category = ({ route }: any) => {
         }
         else {
             return (
-                <View style={globalStyles.datePickerContainer}>
+                <View key={key} style={globalStyles.datePickerContainer}>
                     <Text style={globalStyles.fieldTypeLabel}>{item?.type}</Text>
                     <RNDatePicker onChange={(e, date)=> {
                         dispatch(changeAttributeValue({ value: date, item, attributeIndex: index }))
-                    }} key={key} value={new Date(item.value)} mode="date" />
+                    }} value={new Date(item.value)} mode="date" />
                 </View>
 
             )
@@ -71,7 +76,7 @@ const Category = ({ route }: any) => {
     )
     return (
         <SafeAreaView>
-            <View style={globalViewPadding}>
+            <View style={[globalViewPadding, {marginBottom:50}]}>
                 <FlatList
                     data={Machines[route.params.index]?.machines?.map((x: any) => { return { ...x, categoryIndex: route.params.index } })}
                     renderItem={renderMachine}
@@ -79,11 +84,6 @@ const Category = ({ route }: any) => {
                 />
                 <Button onPress={(e) => dispatch(addFieldIntoExistingCategory({
                     categoryIndex: route.params.index,
-                    field: {
-                        label: "text",
-                        type: "value",
-                        value: "New Value"
-                    }
                 }))} title={"Add New Fields"} />
 
             </View>

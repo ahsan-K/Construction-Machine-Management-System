@@ -83,7 +83,10 @@ export const globalStyles = StyleSheet.create({
         flex: 1
     },
     datePickerContainer:{
-        flexDirection:'row', width:'100%', justifyContent:'space-between'
+        flexDirection:'row', 
+        width:'100%', 
+        justifyContent:'space-between',
+        marginBottom: 10,
     },
     categoryButtonsContainer: {
         flexDirection: 'row',

@@ -87,7 +87,7 @@ const ManageCategories = () => {
                                                 field: {
                                                     label: "text",
                                                     type: value,
-                                                    value: value === "date" ? new Date() : "New Value"
+                                                    value: value === "date" ? new Date() : (value === "number" ? 0 : "New Value")
                                                 }
                                             }))
                                         }}
@@ -99,8 +99,9 @@ const ManageCategories = () => {
 
                                         ]}
                                     />
-                                    <Text style={[globalStyles.label, { position: 'absolute', zIndex: -1 }]}>Add Field</Text>
                                 </View>
+                                <Text style={[globalStyles.label, {marginStart:0}]}>Add Field</Text>
+
 
                                 <Button onPress={(e) => dispatch(removeCategory("New Category"))} title={"Remove Category"} />
                             </View>
@@ -110,6 +111,7 @@ const ManageCategories = () => {
                 <Button onPress={(e) => dispatch(addCategory("New Category"))} title={"Add New Category"} />
 
             </ScrollView>
+            
         </SafeAreaView>
     );
 };
