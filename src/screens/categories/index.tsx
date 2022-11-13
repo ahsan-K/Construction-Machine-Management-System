@@ -18,11 +18,6 @@ const Category = ({ route }: any) => {
     const Machines = useSelector((state: RootState) => state.machineReducer.data)
     const dispatch = useDispatch()
 
-    useEffect(()=>{
-        if(Machines[route.params.index]?.fields.length !== Machines[route.params.index]?.machines.length){
-            dispatch(updateAttributes({categoryIndex:route.params.index}))
-        }
-    },[Machines[route.params.index]?.fields])
 
     const RenderAttributes = ({ item, index, key }: any) => {
         if (item?.type === "text" || item?.type === "number") {
