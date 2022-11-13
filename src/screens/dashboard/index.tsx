@@ -49,7 +49,7 @@ const Dashboard = () => {
                     <Text style={globalStyles.fieldTypeLabel}>{item?.type}</Text>
                     <RNDatePicker onChange={(e, date)=> {
                         dispatch(changeAttributeValue({ value: date, item, attributeIndex: index }))
-                    }} key={key} value={new Date(item.value)} mode="date" />
+                    }} key={key} value={isNaN(new Date(item?.value)) ? new Date() : new Date(item?.value)} mode="date" />
                 </View>
             )
         }
@@ -60,7 +60,7 @@ const Dashboard = () => {
         <View style={globalStyles.card}>
             <Text style={globalStyles.machineHeading}>{item?.machineName}</Text>
             {
-                item?.attributes.map((x: any) => { return { ...x, machineIndex: index, categoryIndex: item.categoryIndex } })
+                item?.attributes?.map((x: any) => { return { ...x, machineIndex: index, categoryIndex: item.categoryIndex } })
                     .map((item: any, index: number) => (
                         <RenderAttributes key={index} item={item} index={index} />
                     ))

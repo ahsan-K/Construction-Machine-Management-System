@@ -82,6 +82,8 @@ const ManageCategories = () => {
                                     <RNPickerSelect
                                         placeholder={"Add Field"}
                                         onValueChange={(value) => {
+                                            console.log(value, ' adsasdas')
+                                            if(!value) return
                                             dispatch(addField({
                                                 categoryIndex: index,
                                                 field: {

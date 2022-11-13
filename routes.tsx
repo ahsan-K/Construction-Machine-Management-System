@@ -16,7 +16,7 @@ export default function Routes() {
         <Drawer.Screen name="Dashboard" component={Dashboard} />
         {
           categories.map((item:any, index:number)=>(
-            <Drawer.Screen initialParams={{ item, index }}
+            <Drawer.Screen key={index} initialParams={{ item, index }}
             name={item?.categoryName} component={Categories} />
           ))
         }

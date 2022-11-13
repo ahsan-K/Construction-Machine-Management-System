@@ -101,6 +101,14 @@ const MachineSlice = createSlice({
         addField: (state, action) => {
             let tempData = [...state.data].map(x => { return { ...x } });
             tempData[action.payload.categoryIndex].fields.push(action.payload.field)
+            tempData[action.payload.categoryIndex].machines = tempData[action.payload.categoryIndex].machines.map((x:any)=> {
+                return {
+                    ...x,
+                    attributes:[...x.attributes, action.payload.field]
+                }
+            })
+            console.log(tempData[action.payload.categoryIndex], ' tempData[action.payload.categoryIndex].machines')
+
             state.data = tempData
         },
 

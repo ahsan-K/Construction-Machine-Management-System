@@ -18,11 +18,6 @@ const Category = ({ route }: any) => {
     const Machines = useSelector((state: RootState) => state.machineReducer.data)
     const dispatch = useDispatch()
 
-    useEffect(()=>{
-        if(Machines[route.params.index]?.fields.length !== Machines[route.params.index]?.machines.length){
-            dispatch(updateAttributes({categoryIndex:route.params.index}))
-        }
-    },[Machines[route.params.index]?.fields])
 
     const RenderAttributes = ({ item, index, key }: any) => {
         if (item?.type === "text" || item?.type === "number") {
@@ -65,7 +60,7 @@ const Category = ({ route }: any) => {
         <View style={globalStyles.card}>
             <Text style={globalStyles.machineHeading}>{item?.machineName}</Text>
             {
-                item?.attributes.map((x: any) => { return { ...x, machineIndex: index, categoryIndex: item.categoryIndex } })
+                item?.attributes?.map((x: any) => { return { ...x, machineIndex: index, categoryIndex: item.categoryIndex } })
                     .map((item: any, index: number) => (
                         <RenderAttributes key={index} item={item} index={index} />
                     ))
@@ -74,6 +69,7 @@ const Category = ({ route }: any) => {
 
         </View>
     )
+    console.log(Machines[route.params.index]?.machines, ' Machines[route.params.index]?.machines')
     return (
         <SafeAreaView>
             <View style={[globalViewPadding, {marginBottom:50}]}>
