@@ -1,24 +1,31 @@
-import * as React from 'react';
+import React, {useEffect} from 'react';
 import {
     Text,
     View,
     FlatList,
     TextInput,
-    TouchableOpacity,
-    ScrollView,
-    SafeAreaView
+    SafeAreaView,
+    Button
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { globalStyles, globalViewPadding } from '../../utils/constants';
 import CheckBox from '@react-native-community/checkbox';
-import { changeAttributeValue } from '../../redux/machineSlice';
+import { addFieldIntoExistingCategory, changeAttributeValue, deleteMachine, updateAttributes } from '../../redux/machineSlice';
 import RNDatePicker from '@react-native-community/datetimepicker';
 
-
-const Dashboard = () => {
-    const Categories = useSelector((state: RootState) => state.machineReducer.data)
+const Category = ({ route }: any) => {
+    const Machines = useSelector((state: RootState) => state.machineReducer.data)
     const dispatch = useDispatch()
+
+    useEffect(()=>{
+        console.log(Machines[route.params.index]?.fields.length, ' Machines[route.params.index]?.fields.length')
+        if(Machines[route.params.index]?.fields.length !== Machines[route.params.index]?.machines.length){
+
+            dispatch(updateAttributes({categoryIndex:route.params.index}))
+        }
+    },[Machines[route.params.index]?.fields])
+
     const RenderAttributes = ({ item, index, key }: any) => {
         if (item?.type === "text" || item?.type === "number") {
             return (
@@ -31,7 +38,7 @@ const Dashboard = () => {
                 </View>
             )
         }
-        else if (item?.type === "checkBox") {
+        else if (item?.type === "checkbox") {
             return (
                 <View key={key} style={globalStyles.checkBoxContainer}>
                     <CheckBox
@@ -39,7 +46,7 @@ const Dashboard = () => {
                         onValueChange={(e) => dispatch(changeAttributeValue({ value: e, item, attributeIndex: index }))}
                         style={globalStyles.checkBox}
                     />
-                    <Text style={globalStyles.label}>{item?.value}</Text>
+                    <Text style={globalStyles.label}>{item?.label}</Text>
                 </View>
             )
         }
@@ -51,12 +58,12 @@ const Dashboard = () => {
                         dispatch(changeAttributeValue({ value: date, item, attributeIndex: index }))
                     }} key={key} value={new Date(item.value)} mode="date" />
                 </View>
+
             )
         }
     }
 
-
-    const RenderMachine = ({ item, index }: any) => (
+    const renderMachine = ({ item, index }: any) => (
         <View style={globalStyles.card}>
             <Text style={globalStyles.machineHeading}>{item?.machineName}</Text>
             {
@@ -65,32 +72,31 @@ const Dashboard = () => {
                         <RenderAttributes key={index} item={item} index={index} />
                     ))
             }
+            <Button onPress={(e) => dispatch(deleteMachine({ categoryIndex: item?.categoryIndex }))} title={"Delete"} />
+
         </View>
     )
-
     return (
         <SafeAreaView>
-            <ScrollView style={globalViewPadding}>
-            {!Categories.length ? <Text style={[globalStyles.label, { color: 'gray', textAlign: 'center', marginVertical: 10 }]}>There is no category.</Text> : null}
+            <View style={globalViewPadding}>
+                <FlatList
+                    data={Machines[route.params.index]?.machines?.map((x: any) => { return { ...x, categoryIndex: route.params.index } })}
+                    renderItem={renderMachine}
+                    keyExtractor={item => item?.categoryIndex}
+                />
+                <Button onPress={(e) => dispatch(addFieldIntoExistingCategory({
+                    categoryIndex: route.params.index,
+                    field: {
+                        label: "text",
+                        type: "value",
+                        value: "New Value"
+                    }
+                }))} title={"Add New Fields"} />
 
-                {
-                    Categories.map((item: any, index: number) => (
-                        <>
-                        
-                            <Text style={globalStyles.heading}>{item?.categoryName}</Text>
-                            {!item?.machines.length ? <Text style={[globalStyles.label, { color: 'gray', textAlign: 'center', marginBottom: 10 }]}>There is no machine associated with this cateogry yet.</Text> : null}
-                            {
-                                item?.machines?.map((x: any) => { return { ...x, categoryIndex: index } })
-                                    .map((item: any, index: number) => (
-                                        <RenderMachine key={index} item={item} index={index} />
-                                    ))
-                            }
-                        </>
-                    ))
-                }
-            </ScrollView>
+            </View>
+
         </SafeAreaView>
     );
 };
 
-export default Dashboard;
+export default Category;
